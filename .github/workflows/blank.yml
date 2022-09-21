@@ -42,6 +42,10 @@ jobs:
           
           lastCommit=$(curl  -H "Accept: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/repos/testinguser883/jekins-github/pulls/5 | jq '.head.sha')
           echo "LAST COMMIT = $lastCommit"
+          
+          echo "HEAD SHA = ${{ github.event.pull_request.head.sha }}"
+          echo "MERGE SHA = ${{ github.sha }}"
+          
           if [[ "${ghprbSourceBranch}" == "SIT" || "${ghprbSourceBranch}" == "DEV" || "${ghprbSourceBranch}" == "UAT" || "${ghprbSourceBranch}" == "PT" ]]; then
             curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
           else
