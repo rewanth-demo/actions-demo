@@ -32,8 +32,15 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         env:
-          READONLY_TOKEN: ${{ secrets.READONLY_TOKEN }}
+          UPDATE_COMMIT_STATUS_TOKEN: ${{ secrets.UPDATE_COMMIT_STATUS_TOKEN }}
         run: |
           echo Add other actions to build,
           echo test, and deploy your project. Test members list
-          curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $READONLY_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
+          curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
+          
+          if [[ "${ghprbSourceBranch}" == "SIT" || "${ghprbSourceBranch}" == "DEV" || "${ghprbSourceBranch}" == "UAT" || "${ghprbSourceBranch}" == "PT" ]]; then
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/${org}/${repo}/statuses/${ghprbActualCommit}"
+          else
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"failure","target_url":"https://google.com","description":"Source must be DEV/SIT/UAT/PT branch","context":"Source branch checker bot"}' "https://api.github.com/repos/${org}/${repo}/statuses/${ghprbActualCommit}"
+          fi
+
