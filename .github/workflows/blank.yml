@@ -41,7 +41,7 @@ jobs:
           curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
           
           lastCommit=$(curl  -H "Accept: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/repos/testinguser883/jekins-github/pulls/5 | jq '.head.sha')
-          
+          echo "LAST COMMIT = $lastCommit"
           if [[ "${ghprbSourceBranch}" == "SIT" || "${ghprbSourceBranch}" == "DEV" || "${ghprbSourceBranch}" == "UAT" || "${ghprbSourceBranch}" == "PT" ]]; then
             curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
           else
