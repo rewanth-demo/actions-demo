@@ -35,13 +35,16 @@ jobs:
           UPDATE_COMMIT_STATUS_TOKEN: ${{ secrets.REWANTH_TOKEN }}
         run: |
           env
+          echo "REPO NAME = $GITHUB_REPOSITORY"
           echo Add other actions to build,
           echo test, and deploy your project. Test members list
           curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
           
+          lastCommit=$(curl  -H "Accept: application/json" -H "Authorization: token $READONLY_TOKEN" https://api.github.com/repos/testinguser883/jekins-github/pulls/5 | jq '.head.sha')
+          
           if [[ "${ghprbSourceBranch}" == "SIT" || "${ghprbSourceBranch}" == "DEV" || "${ghprbSourceBranch}" == "UAT" || "${ghprbSourceBranch}" == "PT" ]]; then
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/${org}/${repo}/statuses/${ghprbActualCommit}"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
           else
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"failure","target_url":"https://google.com","description":"Source must be DEV/SIT/UAT/PT branch","context":"Source branch checker bot"}' "https://api.github.com/repos/${org}/${repo}/statuses/${ghprbActualCommit}"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"failure","target_url":"https://google.com","description":"Source must be DEV/SIT/UAT/PT branch","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
           fi
 
