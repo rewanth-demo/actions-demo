@@ -34,6 +34,7 @@ jobs:
         env:
           UPDATE_COMMIT_STATUS_TOKEN: ${{ secrets.REWANTH_TOKEN }}
         run: |
+          env
           echo Add other actions to build,
           echo test, and deploy your project. Test members list
           curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $UPDATE_COMMIT_STATUS_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
