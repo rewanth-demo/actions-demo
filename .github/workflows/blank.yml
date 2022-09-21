@@ -34,4 +34,4 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project. Test members list
-          curl https://api.github.com/orgs/rewanth-demo/teams/test/members 
+          curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $READONLY_TOKEN" https://api.github.com/orgs/rewanth-demo/teams/test/members 
