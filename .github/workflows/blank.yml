@@ -47,8 +47,8 @@ jobs:
           echo "MERGE SHA = ${{ github.sha }}"
           
           if [[ "${ghprbSourceBranch}" == "SIT" || "${ghprbSourceBranch}" == "DEV" || "${ghprbSourceBranch}" == "UAT" || "${ghprbSourceBranch}" == "PT" ]]; then
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"success","description":"Looks good!","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${{ github.event.pull_request.head.sha }}"
           else
-            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"failure","target_url":"https://google.com","description":"Source must be DEV/SIT/UAT/PT branch","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${lastCommit}"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $UPDATE_COMMIT_STATUS_TOKEN" -d '{"state":"failure","target_url":"https://google.com","description":"Source must be DEV/SIT/UAT/PT branch","context":"Source branch checker bot"}' "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/${{ github.event.pull_request.head.sha }}"
           fi
 
